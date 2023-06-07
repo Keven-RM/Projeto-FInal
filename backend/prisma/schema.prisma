@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model Post {
+  id       Int      @id @unique @default(autoincrement())
+  date     DateTime
+  content  String
+  likes    Int      @default(0)
+  isLiked  Boolean  @default(false)
+  authorId Int
+  parentId Int?
+  User     User?    @relation(fields: [authorId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model User {
+  id    Int     @id @unique @default(autoincrement())
+  email String  @unique
+  name  String?
+  Post  Post[]
+}
